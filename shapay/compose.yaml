@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: shapay_postgres
+    environment:
+      POSTGRES_DB: shapay
+      POSTGRES_USER: shapay_user
+      POSTGRES_PASSWORD: shapayyyy
+    ports:
+      - "5432:5432"
+    volumes:
+      - shapay_data:/var/lib/postgresql/data
+
+volumes:
+  shapay_data:
