@@ -60,6 +60,11 @@ public class WebhookDelivery {
     this.status = "RETRY";
     this.nextAttemptAt = LocalDateTime.now().plusSeconds(delayInSeconds);
 }
+    public void resetForReplay() {
+        this.status = "PENDING";
+        this.nextAttemptAt = null;
+        this.claimedAt = null;
+    }
 
     public Long getId() {
         return id;

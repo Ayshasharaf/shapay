@@ -17,10 +17,13 @@ import com.shapay.delivery.entity.WebhookDelivery;
 import com.shapay.delivery.repository.DeliveryAttemptRepository;
 import com.shapay.delivery.repository.WebhookDeliveryRepository;
 
+import com.shapay.delivery.service.DeliveryResultService;
+
 @Component
 public class WebhookDeliveryWorker {
     private final WebhookDeliveryClaimService claimService;
     private final WebhookSignatureService signatureService;
+    private final DeliveryResultService resultService;
 
     private final WebhookDeliveryRepository deliveryRepository;
     private final RestClient restClient;
@@ -30,13 +33,16 @@ public class WebhookDeliveryWorker {
         WebhookDeliveryRepository deliveryRepository,
         DeliveryAttemptRepository attemptRepository,
         WebhookDeliveryClaimService claimService,
-        WebhookSignatureService signatureService
+        WebhookSignatureService signatureService,
+         DeliveryResultService resultService
+
 
     ) {
 
         this.deliveryRepository = deliveryRepository;
         this.attemptRepository = attemptRepository;
         this.signatureService = signatureService;
+        this.resultService = resultService;
 
         this.claimService = claimService;
 
@@ -127,8 +133,7 @@ public class WebhookDeliveryWorker {
 
                 attempt.setDurationMs(duration);
 
-                attemptRepository.save(attempt);
-                deliveryRepository.save(delivery);
+                resultService.saveResult(attempt, delivery);
             }
         }
     }

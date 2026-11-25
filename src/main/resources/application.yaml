@@ -7,6 +7,7 @@ spring:
     username: shapay_user
     password: shapayyyy
     driver-class-name: org.postgresql.Driver
+    
 
   jpa:
     hibernate:
@@ -21,7 +22,7 @@ spring:
     locations: classpath:db/migration
 
 test-merchant:
-  webhook-secret: "STmw_FPbhHgbz3ucEoMLYcLu6A0IUihNz_bCH1VIeso"
+  webhook-secret: "947c093a445015591a9f4d85dacc6428553ac2b9845ecdf3fea09f5858d3139b"
 
 server:
   port: 8080

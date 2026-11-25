@@ -24,6 +24,9 @@ public class WebhookDeliveryClaimService {
     public List<WebhookDelivery> claimDeliveries(int batchSize) {
 
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime timeout = now.minusMinutes(2);
+
+        deliveryRepository.recoverStaleDeliveries(now, timeout);
 
         List<Long> claimedIds =
             deliveryRepository.claimReadyDeliveryIds(now, batchSize);

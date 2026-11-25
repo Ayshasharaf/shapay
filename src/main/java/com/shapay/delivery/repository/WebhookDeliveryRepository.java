@@ -4,6 +4,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -65,6 +66,19 @@ public interface WebhookDeliveryRepository extends JpaRepository<WebhookDelivery
         """)
     List<WebhookDelivery> findAllByIdWithDetails(
         @Param("ids") List<Long> ids
+    );
+    @Modifying
+    @Query(value = """
+        UPDATE webhook_deliveries
+        SET status = 'RETRY',
+            next_attempt_at = :now,
+            claimed_at = NULL
+        WHERE status = 'PROCESSING'
+        AND claimed_at < :timeout
+        """, nativeQuery = true)
+    int recoverStaleDeliveries(
+        @Param("now") LocalDateTime now,
+        @Param("timeout") LocalDateTime timeout
     );
     
 
