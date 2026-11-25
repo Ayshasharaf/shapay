@@ -24,6 +24,11 @@ public class Payment {
     private String status;
     @Column (nullable = false)
     private LocalDateTime createdAt;
+    @Column(name = "idempotency_key", unique = true)
+    private String idempotencyKey;
+
+    @Column(name = "request_hash", length = 64)
+    private String requestHash;
 
     public Payment() {
     }
@@ -34,6 +39,21 @@ public class Payment {
     }
     public long getId() {
         return id;
+    }
+    public String getIdempotencyKey() {
+    return idempotencyKey;
+    }
+
+    public void setIdempotencyKey(String idempotencyKey) {
+        this.idempotencyKey = idempotencyKey;
+    }
+
+    public String getRequestHash() {
+        return requestHash;
+    }
+
+    public void setRequestHash(String requestHash) {
+        this.requestHash = requestHash;
     }
     
     public BigDecimal getAmount() {
