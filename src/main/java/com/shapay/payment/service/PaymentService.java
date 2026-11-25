@@ -1,8 +1,8 @@
 package com.shapay.payment.service;
 import java.math.BigDecimal;
 import java.util.Map;
+import tools.jackson.core.JacksonException;
 
-import org.springframework.boot.json.JsonParseException;
 import org.springframework.stereotype.Service;
 
 import com.shapay.payment.entity.Payment;
@@ -10,19 +10,22 @@ import com.shapay.payment.repository.PaymentRepository;
 import com.shapay.webhook.entity.WebhookEvent;
 import com.shapay.webhook.repository.WebhookEventRepository;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
+import com.shapay.delivery.service.WebhookDeliveryService;
 
 @Service 
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final WebhookEventRepository webhookRepository;
     private final ObjectMapper objectMapper;
+    private final WebhookDeliveryService webhookDeliveryService;
 
-    public PaymentService(PaymentRepository paymentRepository, WebhookEventRepository webhookRepository, ObjectMapper objectMapper) {
+    public PaymentService(PaymentRepository paymentRepository, WebhookEventRepository webhookRepository, ObjectMapper objectMapper, WebhookDeliveryService webhookDeliveryService) {
         this.paymentRepository = paymentRepository;
         this.webhookRepository = webhookRepository;
         this.objectMapper = objectMapper;
+        this.webhookDeliveryService = webhookDeliveryService;
     }
 
 
@@ -48,9 +51,10 @@ public class PaymentService {
             event.setPayload(jsonPayload);
 
             // 6. Save webhook event
-            webhookRepository.save(event);
+            WebhookEvent savedEvent = webhookRepository.save(event);    
+            webhookDeliveryService.createDeliveries(savedEvent);
 
-        } catch (JsonParseException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException("Failed to create webhook payload", e);
         }
 
